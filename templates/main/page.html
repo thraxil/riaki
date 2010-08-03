@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load markup %}
+
+{% block content %}
+{% if exists %}
+
+{% if not edit %}
+<h1>{{page.title}}</h1>
+
+{{page.linked_body|markdown}}
+
+{% if page.tags %}
+<p>tags: {% for tag in page.tags %}<a href="/tag/{{tag}}/">{{tag}}</a> {% endfor %}
+{% endif %}
+
+{% else %}
+
+<form action="." method="post">
+<table width="100%">
+<tr><th>slug</th><td><input type="text" name="slug" value="{{page.slug}}"/></tr>
+<tr><th>title</th><td><input type="text" name="title" value="{{page.title}}"/></tr>
+<tr><th>body</th><td>
+<textarea name="body">{{page.body}}</textarea>
+</td></tr>
+<tr><th>tags</th><td><input type="text" name="tags" value="{{page.tags_string}}"/></td></tr>
+</table>
+<input type="submit" value="save" />
+</form>
+
+
+{% endif %}
+
+{% else %}
+
+<form action="." method="post">
+<table width="100%">
+<tr><th>slug</th><td><input type="text" name="slug" value="{{slug}}"/></td></tr>
+<tr><th>title</th><td><input type="text" name="title" /></td></tr>
+<tr><th>body</th><td>
+<textarea name="body"></textarea>
+</td></tr>
+<tr><th>tags</th><td><input type="text" name="tags" /></td></tr>
+</table>
+<input type="submit" value="save" />
+</form>
+{% endif %}
+{% endblock %}

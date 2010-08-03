@@ -1,0 +1,8 @@
+syntax: glob
+*.pyc
+docs
+riak.egg-info
+build
+*.html
+.*.swp
+dist/*
