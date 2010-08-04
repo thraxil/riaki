@@ -41,13 +41,13 @@ class Page:
                 'tags' : self.tags,
                 'created' : self.created.strftime(DTFORMAT),
                 'modified' : self.modified.strftime(DTFORMAT),
-                'versions' : self.versions,
             }
 
     def save(self,comment=""):
         v = self.create_version(comment)
         self.versions.append(v)
         data = self.data()
+        data['versions'] = self.versions
         data['modified'] = datetime.now().strftime(DTFORMAT)
         obj = page_bucket.get_binary(self.slug)
         obj.set_data(dumps(data))
@@ -85,12 +85,6 @@ class Page:
                     part = """<a href="/page/%s/" class="notfound">%s</a>""" % (make_slug(title),link_text)
             results.append(part)
         return ''.join(results)
-
-    def exists(self,slug):
-        # basically just a cached version of exists()
-        if not hasattr(self,"__pagelist"):
-            self.__pagelist = page_bucket.get_keys()
-        return slug in self.__pagelist
 
     def page_by_title(self,title):
         slug = make_slug(title)
