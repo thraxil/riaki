@@ -158,7 +158,8 @@ def create_page(slug,title,body,tags):
     return Page(json)
 
 def exists(slug):
-    return slug in page_bucket.get_keys()
+    p = page_bucket.get_binary(slug)
+    return p.exists()
 
 def get_tag_pages(tag):
     t = tag_bucket.get_binary(tag)
