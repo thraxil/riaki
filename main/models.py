@@ -23,45 +23,63 @@ tag_bucket = client.bucket('riakitag')
 DTFORMAT = "%Y-%m-%dT%H:%M:%S"
 
 class Page:
-    def __init__(self,json):
+    def __init__(self,p):
+        self._page = p
+        json = p.get_data()
         data = loads(json)
         self.slug = data['slug']
         self.title = data['title']
         self.body = data.get('body','')
-        self.tags = data.get('tags',[])
         self.created = datetime.strptime(data['created'],DTFORMAT)
         self.modified = datetime.strptime(data['modified'],DTFORMAT)
-        self.versions = data.get('versions',[])
 
     def data(self):
         # suitable for json serialization
         return {'title' : self.title,
                 'slug' : self.slug,
                 'body' : self.body,
-                'tags' : self.tags,
                 'created' : self.created.strftime(DTFORMAT),
                 'modified' : self.modified.strftime(DTFORMAT),
             }
 
     def save(self,comment=""):
         v = self.create_version(comment)
-        self.versions.append(v)
         data = self.data()
-        data['versions'] = self.versions
         data['modified'] = datetime.now().strftime(DTFORMAT)
-        obj = page_bucket.get_binary(self.slug)
-        obj.set_data(dumps(data))
-        obj.store()
-        self.update_tags()
+        self._page.set_data(dumps(data))
+        self._page.store()
+
+    def versions(self):
+        return [v.get() for v in self._page.link("riakiversion").run() if v.get().exists()]
+
+    def version_data(self,v):
+        try:
+            d = loads(v.get_data())
+            d['version_created'] = datetime.strptime(d['version_created'],DTFORMAT)
+            d['created'] = datetime.strptime(d['created'],DTFORMAT)
+            d['modified'] = datetime.strptime(d['modified'],DTFORMAT)
+            # there must be one single link back to a Page
+            d['page'] = Page(v.get_links()[0].get())
+            return d
+        except:
+            return {}
+
+
+    def versions_data(self):
+        return [self.version_data(v)
+            for v in self.versions()]
 
     def create_version(self,comment=""):
-        id = self.slug + '-version-' + str(len(self.versions))
-        d = {
-            'id' : id,
-            'created' : datetime.now().strftime(DTFORMAT),
-            'comment' : comment,
-            }
-        v = version_bucket.new_binary(id,dumps(self.data())).store()
+        id = self.slug + '-version-' + str(len(self._page.link("riakiversion").run()))
+        d = self.data()
+        d['version_id'] = id
+        d['version_created'] = datetime.now().strftime(DTFORMAT)
+        d['version_comment'] = comment
+        d['tags'] = self.tags_string()
+        
+        v = version_bucket.new_binary(id,dumps(d)).store()
+        v.add_link(self._page).store()
+        self._page.add_link(v).store()
         return d
         
     def get_absolute_url(self):
@@ -94,33 +112,45 @@ class Page:
         return self.link_text(self.body)
 
     def tags_string(self):
-        return " ".join(self.tags)
+        return " ".join(self.tags())
 
-    def update_tags(self):
-        for tag in self.tags:
-            t = tag_bucket.get_binary(tag)
-            if not t.exists():
-                print "doesn't exist"
-                d = {"pages" : [{"title" : self.title, "slug" : self.slug}]}
-                t = tag_bucket.new_binary(tag,dumps(d))
-                t.store()
-            else:
-                print "exists"
-                d = loads(t.get_data())
-                already_there = False
-                for page in d['pages']:
-                    if page["slug"] == self.slug:
-                        already_there = True
-                        break
-                if not already_there:
-                    print "not already there"
-                    d['pages'].append({"title" : self.title, "slug" : self.slug})
-                    t.set_data(dumps(d))
-                    t.store()
-                else:
-                    print "already there"
-                    
-            
+    def tags(self):
+        return [tag.get_key() for tag in self._page.link("riakitag").run() if tag.get().exists()]
+
+    def clear_tags(self):
+        """ clear all the tag links out """
+        for tag in self._page.link("riakitag").run():
+            t = tag.get()
+            self._page.remove_link(tag).store()
+            t.remove_link(self._page).store()
+            # if the tag no longer has any pages, delete it
+            if len(t.get_links()) == 0:
+                t.delete()
+        self._page.store()
+
+    def add_tag(self,tag):
+        t = tag_bucket.get_binary(tag)
+        if not t.exists():
+            # it doesn't exist so it must not be in
+            # our list of tags for the page either
+            t = tag_bucket.new(tag,tag)
+            t.add_link(self._page)
+            t.store()
+            self._page.add_link(t).store()
+        else:
+            # the tag already exists, so we need to check
+            # if it's already in the list of tags for this page
+            # and avoid double entering it
+            if tag not in self.tags():
+                # we can add it
+                self._page.add_link(t).store()
+                # also add the back-link
+                t.add_link(self._page).store()
+
+    def update_tags(self,tags):
+        self.clear_tags()
+        for tag in tags:
+            self.add_tag(tag)
 
 def make_slug(title="no title"):
     title = title.strip().lower()
@@ -132,24 +162,26 @@ def make_slug(title="no title"):
     return slug
 
 def get_page(slug):
-    json = page_bucket.get_binary(slug).get_data()
-    return Page(json=json)
+    p = page_bucket.get_binary(slug)
+    return Page(p)
 
 def create_page(slug,title,body,tags):
     created = datetime.now().strftime(DTFORMAT)
     modified = created
     versions = []
     json = dumps({'title' : title,
-                        'slug' : slug,
-                        'body' : body,
-                        'tags' : tags,
-                        'created' : created,
-                        'modified' : modified,
-                        'versions' : [],
-                        'tags' : tags})
+                  'slug' : slug,
+                  'body' : body,
+                  'created' : created,
+                  'modified' : modified,
+                  })
+    
     obj = page_bucket.new_binary(slug,json).store()
     # save it, then return a useful object
-    return Page(json)
+    p = Page(obj)
+    for t in tags:
+        p.add_tag(t)
+    return p
 
 def exists(slug):
     p = page_bucket.get_binary(slug)
@@ -159,6 +191,7 @@ def get_tag_pages(tag):
     t = tag_bucket.get_binary(tag)
     if not t.exists():
         return []
-    return [get_page(p['slug']) for p in loads(t.get_data())['pages']]
+    print str([p.get() for p in t.link("riakipage").run()])
+    return [Page(p.get()) for p in t.link("riakipage").run()]
     
     

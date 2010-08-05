@@ -38,7 +38,7 @@ def page(request,slug="index"):
             page = get_page(slug)
             page.body = request.POST.get('body','')
             page.title = request.POST.get('title','')
-            page.tags = request.POST.get('tags','').split(' ')
+            page.update_tags(request.POST.get('tags','').split(' '))
             page.save()
             return HttpResponseRedirect(page.get_absolute_url())
         else:

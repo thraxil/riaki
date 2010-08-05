@@ -13,6 +13,14 @@
 <p>tags: {% for tag in page.tags %}<a href="/tag/{{tag}}/">{{tag}}</a> {% endfor %}
 {% endif %}
 
+{% if page.versions %}
+<ul>previous versions: 
+{% for version in page.versions_data %}
+<li><a href="/version/{{version.version_id}}/">{{version.version_created}}</a>
+</li>{% endfor %}
+</ul>
+{% endif %}
+
 {% else %}
 
 <form action="." method="post">
