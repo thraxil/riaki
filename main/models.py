@@ -70,7 +70,8 @@ class Page:
             for v in self.versions()]
 
     def create_version(self,comment=""):
-        id = self.slug + '-version-' + str(len(self._page.link("riakiversion").run()))
+        n = len([v for v in self._page.get_links() if v.get_bucket() == "riakiversion"])
+        id = self.slug + '-version-' + str(n)
         d = self.data()
         d['version_id'] = id
         d['version_created'] = datetime.now().strftime(DTFORMAT)
