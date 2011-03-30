@@ -50,10 +50,7 @@ class Page:
         self._page.store()
 
     def versions(self):
-        try:
-            return [v.get() for v in self._page.link("riakiversion").run() if v.get().exists()]
-        except:
-            return []
+        return [v.get() for v in self._page.get_links() if v.get_bucket() == "riakiversion" and v.get().exists()]
 
     def version_data(self,v):
         try:
@@ -118,15 +115,16 @@ class Page:
         return " ".join(self.tags())
 
     def tags(self):
-        try:
-            return [tag.get_key() for tag in self._page.link("riakitag").run() if tag.get().exists()]
-        except:
-            return []
+        return [tag.get_key() for tag in self._page.get_links() if tag.get_bucket() == 'riakitag' and tag.get().exists()]
 
     def clear_tags(self):
         """ clear all the tag links out """
-        for tag in self._page.link("riakitag").run():
+        for tag in self._page.get_links():
+            if tag.get_bucket() != "riakitag":
+                continue
             t = tag.get()
+            if not t.exists():
+                continue
             self._page.remove_link(tag).store()
             t.remove_link(self._page).store()
             # if the tag no longer has any pages, delete it
@@ -139,15 +137,18 @@ class Page:
         if not t.exists():
             # it doesn't exist so it must not be in
             # our list of tags for the page either
+            print "creating new tag"
             t = tag_bucket.new(tag,tag)
             t.add_link(self._page)
             t.store()
             self._page.add_link(t).store()
         else:
+            print "tag exists"
             # the tag already exists, so we need to check
             # if it's already in the list of tags for this page
             # and avoid double entering it
             if tag not in self.tags():
+                print "tag not already there"
                 # we can add it
                 self._page.add_link(t).store()
                 # also add the back-link
@@ -197,7 +198,7 @@ def get_tag_pages(tag):
     t = tag_bucket.get_binary(tag)
     if not t.exists():
         return []
-    print str([p.get() for p in t.link("riakipage").run()])
-    return [Page(p.get()) for p in t.link("riakipage").run()]
+
+    return [Page(p.get()) for p in t.get_links() if p.get_bucket() == "riakipage"]
     
     

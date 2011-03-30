@@ -21,6 +21,6 @@ subprocess.call(["python",os.path.join(pwd,"pip.py"),"install",
 subprocess.call([os.path.join(vedir,"bin/easy_install"),
                  os.path.join(pwd,"requirements/eggs/protobuf-2.3.0-py2.6.egg")])
 subprocess.call([os.path.join(vedir,"bin/easy_install"),
-                 os.path.join(pwd,"requirements/eggs/riak-1.1.1-py2.6.egg")])
+                 os.path.join(pwd,"requirements/eggs/riak-1.2.1-py2.6.egg")])
 subprocess.call([os.path.join(vedir,"bin/easy_install"),
                  os.path.join(pwd,"requirements/eggs/egenix_mx_base-3.1.3-py2.6-linux-x86_64.egg")])
