@@ -50,7 +50,10 @@ class Page:
         self._page.store()
 
     def versions(self):
-        return [v.get() for v in self._page.link("riakiversion").run() if v.get().exists()]
+        try:
+            return [v.get() for v in self._page.link("riakiversion").run() if v.get().exists()]
+        except:
+            return []
 
     def version_data(self,v):
         try:
@@ -115,7 +118,10 @@ class Page:
         return " ".join(self.tags())
 
     def tags(self):
-        return [tag.get_key() for tag in self._page.link("riakitag").run() if tag.get().exists()]
+        try:
+            return [tag.get_key() for tag in self._page.link("riakitag").run() if tag.get().exists()]
+        except:
+            return []
 
     def clear_tags(self):
         """ clear all the tag links out """
