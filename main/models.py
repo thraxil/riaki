@@ -139,7 +139,7 @@ class Page:
             # it doesn't exist so it must not be in
             # our list of tags for the page either
             print "creating new tag"
-            t = tag_bucket.new(tag,tag)
+            t = tag_bucket.new(tag,tag).store()
             t.add_link(self._page)
             t.store()
             self._page.add_link(t).store()
