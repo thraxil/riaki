@@ -45,9 +45,9 @@ TAGS: {% for tag in page.tags %}<a href="/tag/{{tag}}/">{{tag}}</a> {% endfor %}
 <form action="." method="post">
 <table width="100%">
 <tr><th>slug</th><td><input type="text" name="slug" value="{{slug}}"/></td></tr>
-<tr><th>title</th><td><input type="text" name="title" /></td></tr>
+<tr><th>title</th><td><input type="text" name="title" value="{{slug}}"/></td></tr>
 <tr><th>body</th><td>
-<textarea name="body"></textarea>
+<textarea name="body" cols="70" rows="10" style="width: 96%"></textarea>
 </td></tr>
 <tr><th>tags</th><td><input type="text" name="tags" /></td></tr>
 </table>
