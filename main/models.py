@@ -199,6 +199,8 @@ def create_page(slug,title,body,tags):
     pageindex = index_bucket.get_binary('page-index')
     pageindex.add_link(obj).store()
     for t in tags:
+        if not t:
+            continue
         p.add_tag(t)
     return p
 
