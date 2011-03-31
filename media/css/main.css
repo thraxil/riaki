@@ -272,18 +272,35 @@ img, img a
 	text-decoration: none;
 }
 
+#pagetitle 
+{
+width: 895px;
+height: 30px;
+background-color: #eee;
+border-bottom: #000 solid 1px;
+padding-top: 5px;
+padding-left: 5px;
+}
+#pagetitle h1 {
+padding: 0px;
+margin-bottom: 0px;
+padding-bottom: 0px;
+}
+#tags {
+border-bottom: #999 solid 1px;
+}
+
 /* ---- Primary navigation block elements ---------- */
 #primarynav
 {
 	width: 900px;
-	height: 30px;
+	height: 25px;
 	min-width: 900px;
 	clear: both;
 	margin: 0;
 	padding: 0;
 	border: 0;
-	border-top: 1px solid #fc6;
-	background-color: #c30;
+	background-color: #333;
 }
 
 #primarynav div.encase
@@ -300,6 +317,33 @@ img, img a
 	padding: 0;
 	border: 0;
 	list-style: none;
+}
+
+#history
+{
+	display: block;
+	width: 900px;
+		height: 30px;
+	min-width: 900px;
+	clear: both;
+	margin: 0;
+	padding: 0;
+	border: 0;
+		border-top: 1px solid #ccc;
+	background-color: #fff;
+
+}
+
+#history ul 
+{
+   float: left;
+   list-style: none;
+   height: 20px;
+}
+#history li 
+{
+   display: block;
+   float: left;
 }
 
 #primarynav #leftside ul
@@ -319,24 +363,25 @@ img, img a
 	margin: 3px;
 	padding: 0 0.5em;
 	border: 0;
-	background-color: #fc6;
-	line-height: 24px;
+
+	line-height: 18px;
 }
 
 #primarynav li:hover
 {
-	background-color: #fc9;
+	background-color: #999;
 }
 
 #primarynav a
 {
-	color: #900;
+	color: #fff;
 	text-decoration: none;
+	text-transform: uppercase;
 }
 
 #primarynav a:hover
 {
-	color: #c00;
+	color: #cff;
 	text-decoration: none;
 }
 
