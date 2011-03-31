@@ -165,6 +165,8 @@ class Page:
     def update_tags(self,tags):
         self.clear_tags()
         for tag in tags:
+            if not tag:
+                continue 
             self.add_tag(tag)
 
 def make_slug(title="no title"):
