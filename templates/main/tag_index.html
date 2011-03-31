@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load markup %}
+
+{% block pagetitle %}<h1>Tags</h1>{% endblock %}
+
+{% block content %}
+
+<ul>
+{% for tag in tags %}
+<li><a href="/tag/{{tag}}/">{{tag}}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}
