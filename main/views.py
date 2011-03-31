@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import permission_required
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from models import Page, get_page, create_page, exists, get_tag_pages
+from models import Page, get_page, create_page, exists, get_tag_pages, get_all_tags
 from django.contrib.auth.models import User
 
 class rendered_with(object):
@@ -53,3 +53,7 @@ def page(request,slug="index"):
 @rendered_with("main/tag.html")
 def tag(request,tag):
     return dict(tag=tag,pages=get_tag_pages(tag))
+
+@rendered_with("main/tag_index.html")
+def tag_index(request):
+    return dict(tags=get_all_tags())

@@ -6,6 +6,7 @@ from simplejson import loads, dumps
 from riak import RiakClient
 from riak import RiakPbcTransport
 from riak import RiakHttpTransport
+from riak import RiakMapReduce
 
 from datetime import datetime
 import re
@@ -17,6 +18,10 @@ client = RiakClient(host=HOST,port=PORT)
 page_bucket = client.bucket('riakipage')
 version_bucket = client.bucket('riakiversion')
 tag_bucket = client.bucket('riakitag')
+
+# since it's inefficient to list all the items
+# in a bucket, we manually index some things
+index_bucket = client.bucket('riakiindex')
 
 # Create your models here.
 
@@ -130,6 +135,8 @@ class Page:
             t.remove_link(self._page).store()
             # if the tag no longer has any pages, delete it
             if len(t.get_links()) == 0:
+                tagindex = index_bucket.get_binary('tag-index')
+                tagindex.remove_link(t).store()
                 t.delete()
         self._page.store()
 
@@ -138,18 +145,18 @@ class Page:
         if not t.exists():
             # it doesn't exist so it must not be in
             # our list of tags for the page either
-            print "creating new tag"
             t = tag_bucket.new(tag,tag).store()
             t.add_link(self._page)
             t.store()
             self._page.add_link(t).store()
+            tagindex = index_bucket.get_binary('tag-index')
+            tagindex.add_link(t).store()
+
         else:
-            print "tag exists"
             # the tag already exists, so we need to check
             # if it's already in the list of tags for this page
             # and avoid double entering it
             if tag not in self.tags():
-                print "tag not already there"
                 # we can add it
                 self._page.add_link(t).store()
                 # also add the back-link
@@ -187,6 +194,8 @@ def create_page(slug,title,body,tags):
     obj = page_bucket.new_binary(slug,json).store()
     # save it, then return a useful object
     p = Page(obj)
+    pageindex = index_bucket.get_binary('page-index')
+    pageindex.add_link(obj).store()
     for t in tags:
         p.add_tag(t)
     return p
@@ -195,6 +204,10 @@ def exists(slug):
     p = page_bucket.get_binary(slug)
     return p.exists()
 
+def create_indices():
+    pi = index_bucket.new_binary('page-index',"{}").store()
+    ti = index_bucket.new_binary('tag-index',"{}").store()
+
 def get_tag_pages(tag):
     t = tag_bucket.get_binary(tag)
     if not t.exists():
@@ -202,4 +215,6 @@ def get_tag_pages(tag):
 
     return [Page(p.get()) for p in t.get_links() if p.get_bucket() == "riakipage"]
     
-    
+def get_all_tags():
+    tagindex = index_bucket.get_binary('tag-index')
+    return [t.get_key() for t in tagindex.get_links()]

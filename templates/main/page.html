@@ -15,7 +15,7 @@ TAGS: {% for tag in page.tags %}<a href="/tag/{{tag}}/">{{tag}}</a> {% endfor %}
 {% if exists %}
 
 {% if not edit %}
-
+<div id="editlink">[<a href="?edit=1">edit</a>]</div>
 
 {% filter typogrify %}
 {{page.linked_body|markdown}}

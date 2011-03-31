@@ -334,6 +334,12 @@ border-bottom: #999 solid 1px;
 
 }
 
+#editlink {
+text-align: right;
+margin-top: 0px;
+
+}
+
 #history ul 
 {
    float: left;

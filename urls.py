@@ -9,14 +9,9 @@ from django.views.generic.simple import redirect_to
 site_media_root = os.path.join(os.path.dirname(__file__),"media")
 
 urlpatterns = patterns('',
-                       # Example:
-                       # (r'^riaki/', include('riaki.foo.urls')),
-                       ('^accounts/',include('djangowind.urls')),
-                       (r'^admin/(.*)', admin.site.root),
-		       (r'^survey/',include('survey.urls')),
-                       (r'^tinymce/', include('tinymce.urls')),
                        (r'^$',redirect_to, {'url' : '/page/index/'}),
                        (r'^page/(?P<slug>[^/]*)/$','main.views.page'),
+                       (r'^tag/$','main.views.tag_index'),
                        (r'^tag/(?P<tag>[^/]+)/$','main.views.tag'),
                        (r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': site_media_root}),
                        (r'^uploads/(?P<path>.*)$','django.views.static.serve',{'document_root' : settings.MEDIA_ROOT}),
