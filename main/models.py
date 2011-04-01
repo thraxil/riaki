@@ -72,7 +72,6 @@ class Page:
         except:
             return {}
 
-
     def versions_data(self):
         return [self.version_data(v)
             for v in self.versions()]
@@ -237,6 +236,12 @@ def get_all_tags():
     tags = [str(t.get().get_data()) for t in tagindex.get_links() if t.get().exists()]
     tags.sort(key=str.lower)
     return tags
+
+def get_all_pages():
+    pageindex = index_bucket.get_binary('page-index')
+    pages = [Page(p.get_binary()) for p in pageindex.get_links() if p.get().exists()]
+    pages.sort(key=lambda x: x.title.lower())
+    return pages
 
 def delete_tag(tag):
     tagindex = index_bucket.get_binary('tag-index')

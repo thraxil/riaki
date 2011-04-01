@@ -68,3 +68,7 @@ def delete_tag(request,tag):
 @rendered_with("main/tag_index.html")
 def tag_index(request):
     return dict(tags=get_all_tags())
+
+@rendered_with("main/page_index.html")
+def page_index(request):
+    return dict(pages=models.get_all_pages())

@@ -10,6 +10,7 @@ site_media_root = os.path.join(os.path.dirname(__file__),"media")
 
 urlpatterns = patterns('',
                        (r'^$',redirect_to, {'url' : '/page/index/'}),
+                       (r'^page/$','main.views.page_index'),
                        (r'^page/(?P<slug>[^/]*)/$','main.views.page'),
                        (r'^tag/$','main.views.tag_index'),
                        (r'^tag/(?P<tag>[^/]+)/$','main.views.tag'),
