@@ -224,3 +224,12 @@ def get_all_tags():
     tags = [t.get_key() for t in tagindex.get_links()]
     tags.sort(key=str.lower)
     return tags
+
+def delete_tag(tag):
+    tagindex = index_bucket.get_binary('tag-index')
+    t = tag_bucket.get_binary(tag)
+    tagindex.remove_link(t).store()
+    for p in t.get_links():
+        if p.get_bucket() == "riakipage":
+            p.remove_link(t).store()
+    t.delete()

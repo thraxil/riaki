@@ -2,9 +2,10 @@
 
 from django.contrib.auth.decorators import permission_required
 from django.template import RequestContext
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import render_to_response
 from models import Page, get_page, create_page, exists, get_tag_pages, get_all_tags
+import models
 from django.contrib.auth.models import User
 
 class rendered_with(object):
@@ -53,6 +54,13 @@ def page(request,slug="index"):
 @rendered_with("main/tag.html")
 def tag(request,tag):
     return dict(tag=tag,pages=get_tag_pages(tag))
+
+def delete_tag(request,tag):
+    if request.method == "POST":
+        models.delete_tag(tag)
+        return HttpResponseRedirect("/tag/")
+    else:
+        return HttpResponse("""Are you sure? <form action="." method="post"><input type="submit" value="yes"/></form>""")
 
 @rendered_with("main/tag_index.html")
 def tag_index(request):

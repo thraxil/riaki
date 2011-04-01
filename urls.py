@@ -13,6 +13,7 @@ urlpatterns = patterns('',
                        (r'^page/(?P<slug>[^/]*)/$','main.views.page'),
                        (r'^tag/$','main.views.tag_index'),
                        (r'^tag/(?P<tag>[^/]+)/$','main.views.tag'),
+                       (r'^tag/(?P<tag>[^/]+)/delete/$','main.views.delete_tag'),
                        (r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': site_media_root}),
                        (r'^uploads/(?P<path>.*)$','django.views.static.serve',{'document_root' : settings.MEDIA_ROOT}),
 ) + staticmedia.serve()
