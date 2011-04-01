@@ -221,4 +221,6 @@ def get_tag_pages(tag):
     
 def get_all_tags():
     tagindex = index_bucket.get_binary('tag-index')
-    return [t.get_key() for t in tagindex.get_links()]
+    tags = [t.get_key() for t in tagindex.get_links()]
+    tags.sort(key=str.lower)
+    return tags
