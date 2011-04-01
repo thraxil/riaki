@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load markup %}
 {% load typogrify %}
+{% load unslug %}
 
 {% block pagetitle %}<h1>{{page.title}}</h1>{% endblock %}
 
@@ -45,7 +46,7 @@ TAGS: {% for tag in page.tags %}<a href="/tag/{{tag}}/">{{tag}}</a> {% endfor %}
 <form action="." method="post">
 <table width="100%">
 <tr><th>slug</th><td><input type="text" name="slug" value="{{slug}}"/></td></tr>
-<tr><th>title</th><td><input type="text" name="title" value="{{slug}}"/></td></tr>
+<tr><th>title</th><td><input type="text" name="title" value="{{slug|unslugify}}"/></td></tr>
 <tr><th>body</th><td>
 <textarea name="body" cols="70" rows="10" style="width: 96%"></textarea>
 </td></tr>
