@@ -23,7 +23,6 @@ TAGS: {% for tag in page.tags %}<a href="/tag/{{tag}}/">{{tag}}</a> {% endfor %}
 {% endfilter %}
 
 
-<p><a href="history/">page history</a></p>
 {% else %}
 
 <form action="." method="post">
@@ -55,4 +54,7 @@ TAGS: {% for tag in page.tags %}<a href="/tag/{{tag}}/">{{tag}}</a> {% endfor %}
 <input type="submit" value="save" />
 </form>
 {% endif %}
+{% endblock %}
+
+{% block history %}<p>[<a href="history/">page history</a>]</p>
 {% endblock %}
