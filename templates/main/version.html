@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load markup %}
+{% load typogrify %}
+{% load unslug %}
+
+{% block pagetitle %}<h1>{{version.title}}</h1>{% endblock %}
+
+{% block content %}
+
+<table>
+<tr>
+  <th>Page</th>
+  <td><a href="{{version.page.get_absolute_url}}">{{version.page.title}}</a></td>
+</tr>
+
+<tr>
+  <th>created</th>
+  <td>{{version.created}}</td>
+</tr>
+
+<tr>
+  <th>comment</th>
+  <td>{{version.comment}}</td>
+</tr>
+
+<tr>
+  <th>tags</th>
+  <td>{{version.tags}}</td>
+</tr>
+
+<tr>
+<th>body</th>
+<td>
+{% filter typogrify %}
+{{version.body|markdown}}
+{% endfilter %}
+</td>
+</tr>
+</table>
+
+{% endblock %}

@@ -73,8 +73,10 @@ class Page:
             return {}
 
     def versions_data(self):
-        return [self.version_data(v)
-            for v in self.versions()]
+        vs = [self.version_data(v) for v in self.versions()]
+        vs.sort(key=lambda x: x['modified'])
+        vs.reverse()
+        return vs
 
     def create_version(self,comment=""):
         n = len([v for v in self._page.get_links() if v.get_bucket() == "riakiversion"])
@@ -143,37 +145,27 @@ class Page:
         self._page.store()
 
     def add_tag(self,tag):
-        print "adding tag %s" % tag
         t = tag_bucket.get_binary(slugify(tag))
         if not t.exists():
-            print "doesn't exist"
             # it doesn't exist so it must not be in
             # our list of tags for the page either
             t = tag_bucket.new(slugify(tag),tag).store()
-            print "added"
             t.add_link(self._page)
-            print "linked"
             t.store()
             self._page.add_link(t).store()
-            print "back-linked"
             tagindex = index_bucket.get_binary('tag-index')
             tagindex.add_link(t).store()
-            print "tag-indexed"
 
         else:
             # the tag already exists, so we need to check
             # if it's already in the list of tags for this page
             # and avoid double entering it
-            print "already exists"
             if tag not in self.tags():
                 # we can add it
-                print "adding"
                 self._page.add_link(t).store()
-                print "linked"
                 # also add the back-link
                 t.add_link(self._page).store()
-                print "back-linked"
-
+                
     def update_tags(self,tags):
         self.clear_tags()
         for tag in tags:
@@ -251,3 +243,11 @@ def delete_tag(tag):
         if p.get_bucket() == "riakipage":
             p.remove_link(t).store()
     t.delete()
+
+def get_version(version_id):
+    v = version_bucket.get_binary(version_id)
+    data = loads(v.get_data())
+    data['created'] = datetime.strptime(data['created'],DTFORMAT)
+    data['modified'] = datetime.strptime(data['modified'],DTFORMAT)
+    data['page'] = Page(v.get_links()[0].get())
+    return data

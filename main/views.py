@@ -41,7 +41,6 @@ def page(request,slug="index"):
             page.body = request.POST.get('body','')
             page.title = request.POST.get('title','')
             tags = parse_tags(request.POST.get('tags',''))
-            print str(tags)
             page.update_tags(tags)
             page.save()
             return HttpResponseRedirect(page.get_absolute_url())
@@ -53,6 +52,18 @@ def page(request,slug="index"):
                                tags=parse_tags(request.POST.get('tags','')))
             return HttpResponseRedirect(page.get_absolute_url())
         
+@rendered_with("main/page_history.html")
+def page_history(request,slug="index"):
+    if exists(slug):
+        page = get_page(slug)
+        return dict(page=page)
+    else:
+        return HttpResponse("no such page")
+
+@rendered_with("main/version.html")
+def version(request,version_id):
+    version = models.get_version(version_id)
+    return dict(version=version)
 
 @rendered_with("main/tag.html")
 def tag(request,tag):

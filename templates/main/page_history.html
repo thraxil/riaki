@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load markup %}
+{% load typogrify %}
+{% load unslug %}
+
+{% block pagetitle %}<h1>History: {{page.title}}</h1>{% endblock %}
+
+{% block content %}
+
+<ul>
+{% for version in page.versions_data %}
+<li><a href="/version/{{version.version_id}}">{{version.modified}}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}
