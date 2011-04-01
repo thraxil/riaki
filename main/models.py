@@ -27,6 +27,9 @@ index_bucket = client.bucket('riakiindex')
 
 DTFORMAT = "%Y-%m-%dT%H:%M:%S"
 
+def slugify(s):
+    return s.replace(" ","-")
+
 class Page:
     def __init__(self,p):
         self._page = p
@@ -118,10 +121,10 @@ class Page:
         return self.link_text(self.body)
 
     def tags_string(self):
-        return " ".join(self.tags())
+        return ", ".join(self.tags())
 
     def tags(self):
-        return [tag.get_key() for tag in self._page.get_links() if tag.get_bucket() == 'riakitag' and tag.get().exists()]
+        return [tag.get().get_data() for tag in self._page.get_links() if tag.get_bucket() == 'riakitag' and tag.get().exists()]
 
     def clear_tags(self):
         """ clear all the tag links out """
@@ -141,26 +144,36 @@ class Page:
         self._page.store()
 
     def add_tag(self,tag):
-        t = tag_bucket.get_binary(tag)
+        print "adding tag %s" % tag
+        t = tag_bucket.get_binary(slugify(tag))
         if not t.exists():
+            print "doesn't exist"
             # it doesn't exist so it must not be in
             # our list of tags for the page either
-            t = tag_bucket.new(tag,tag).store()
+            t = tag_bucket.new(slugify(tag),tag).store()
+            print "added"
             t.add_link(self._page)
+            print "linked"
             t.store()
             self._page.add_link(t).store()
+            print "back-linked"
             tagindex = index_bucket.get_binary('tag-index')
             tagindex.add_link(t).store()
+            print "tag-indexed"
 
         else:
             # the tag already exists, so we need to check
             # if it's already in the list of tags for this page
             # and avoid double entering it
+            print "already exists"
             if tag not in self.tags():
                 # we can add it
+                print "adding"
                 self._page.add_link(t).store()
+                print "linked"
                 # also add the back-link
                 t.add_link(self._page).store()
+                print "back-linked"
 
     def update_tags(self,tags):
         self.clear_tags()
@@ -221,7 +234,7 @@ def get_tag_pages(tag):
     
 def get_all_tags():
     tagindex = index_bucket.get_binary('tag-index')
-    tags = [t.get_key() for t in tagindex.get_links()]
+    tags = [str(t.get().get_data()) for t in tagindex.get_links() if t.get().exists()]
     tags.sort(key=str.lower)
     return tags
 

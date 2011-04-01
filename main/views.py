@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response
 from models import Page, get_page, create_page, exists, get_tag_pages, get_all_tags
 import models
 from django.contrib.auth.models import User
+from utils import parse_tags
 
 class rendered_with(object):
     def __init__(self, template_name):
@@ -39,7 +40,9 @@ def page(request,slug="index"):
             page = get_page(slug)
             page.body = request.POST.get('body','')
             page.title = request.POST.get('title','')
-            page.update_tags(request.POST.get('tags','').split(' '))
+            tags = parse_tags(request.POST.get('tags',''))
+            print str(tags)
+            page.update_tags(tags)
             page.save()
             return HttpResponseRedirect(page.get_absolute_url())
         else:
@@ -47,7 +50,7 @@ def page(request,slug="index"):
                 slug = request.POST.get('title').lower()
             page = create_page(slug=slug,title=request.POST.get('title',''),
                                body=request.POST.get('body',''),
-                               tags=request.POST.get('tags','').split(' '))
+                               tags=parse_tags(request.POST.get('tags','')))
             return HttpResponseRedirect(page.get_absolute_url())
         
 
