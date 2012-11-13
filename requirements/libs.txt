@@ -1,4 +1,4 @@
-requirements/src/Django-1.2.1.tar.gz
+requirements/src/Django-1.4.tar.gz
 requirements/src/httplib2-0.4.0.tar.gz
 requirements/src/restclient-0.9.9.tar.gz
 requirements/src/feedparser-4.1.tar.gz
