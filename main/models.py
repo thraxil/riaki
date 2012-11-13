@@ -76,7 +76,8 @@ class Page:
 
     def versions_data(self):
         vs = [self.version_data(v) for v in self.versions()]
-        vs.sort(key=lambda x: x['modified'])
+        vs = [v for v in vs if 'modified' in v]
+        vs.sort(key=lambda x: x.get('modified', ""))
         vs.reverse()
         return vs
 
