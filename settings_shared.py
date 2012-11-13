@@ -45,17 +45,12 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
 )
 
 ROOT_URLCONF = 'riaki.urls'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    # Put application templates before these fallback ones:
     "/var/www/riaki/templates/",
     os.path.join(os.path.dirname(__file__),"templates"),
 )
@@ -65,12 +60,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.flatpages',
     'django.contrib.markup',
     'staticmedia',
-    'django.contrib.admin',
-    'smartif',
-    'template_utils',
     'typogrify',
     'riaki.main',
 )
