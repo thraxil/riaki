@@ -1,5 +1,6 @@
 from django.template.defaultfilters import stringfilter, register
 
+
 @register.filter
 @stringfilter
 def unslugify(value):
