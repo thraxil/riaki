@@ -88,3 +88,4 @@ STATICMEDIA_MOUNTS = (
     ('/sitemedia', 'sitemedia'),
 )
 
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
