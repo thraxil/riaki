@@ -41,12 +41,13 @@ class Page:
 
     def data(self):
         # suitable for json serialization
-        return {'title': self.title,
-                'slug': self.slug,
-                'body': self.body,
-                'created': self.created.strftime(DTFORMAT),
-                'modified': self.modified.strftime(DTFORMAT),
-            }
+        return {
+            'title': self.title,
+            'slug': self.slug,
+            'body': self.body,
+            'created': self.created.strftime(DTFORMAT),
+            'modified': self.modified.strftime(DTFORMAT),
+        }
 
     def save(self, comment=""):
         self.create_version(comment)
