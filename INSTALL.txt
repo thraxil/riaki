@@ -1,0 +1,2 @@
+$ sudo aptitude build-dep pycurl
+$ ./bootstrap.py
