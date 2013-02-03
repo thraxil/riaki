@@ -10,3 +10,5 @@ requirements/src/psycopg2-2.4-no-mx.tar.gz
 requirements/src/pycurl-7.19.0.tar.gz
 requirements/src/protobuf-2.4.1.tar.gz
 requirements/src/riak-1.5.1.tar.gz
+requirements/src/nose-1.1.2.tar.gz
+requirements/src/coverage-3.5.3.tar.gz

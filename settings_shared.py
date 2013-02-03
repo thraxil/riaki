@@ -1,5 +1,6 @@
 # Django settings for riaki project.
 import os.path
+import sys
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -20,6 +21,23 @@ DATABASES = {
         'PASSWORD': '',
         }
 }
+
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+            'HOST': '',
+            'PORT': '',
+            'USER': '',
+            'PASSWORD': '', }}
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=riaki',
+]
 
 
 TIME_ZONE = 'America/New_York'
@@ -64,6 +82,7 @@ INSTALLED_APPS = (
     'staticmedia',
     'typogrify',
     'riaki.main',
+    'django_nose',
 )
 
 RIAK_HOST = "128.59.152.25"
