@@ -15,3 +15,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 RIAK_HOST = "184.106.204.246"
+try:
+    from local_settings import *
+except ImportError:
+    pass
